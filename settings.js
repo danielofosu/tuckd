@@ -1,4 +1,4 @@
-// Tidytabs — Settings page
+// Tuckd — Settings page
 
 // If the extension was reloaded while this page was open, the runtime
 // context is stale and every chrome.* call will throw. Detect and reload.

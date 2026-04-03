@@ -1,4 +1,4 @@
-// Tidytabs — Archive page
+// Tuckd — Archive page
 
 if (!chrome.runtime?.id) location.reload();
 

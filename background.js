@@ -1,4 +1,4 @@
-// Tidytabs — background service worker
+// Tuckd — background service worker
 // Runs cleanup checks every 15 minutes via chrome.alarms
 
 const DEFAULTS = {

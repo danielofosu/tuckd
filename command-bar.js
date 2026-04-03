@@ -1,10 +1,10 @@
-// Tidytabs — Command Bar (content script, injected into active tab)
+// Tuckd — Command Bar (content script, injected into active tab)
 // Uses Shadow DOM for CSS isolation from the host page.
 
 (() => {
   // Toggle if already injected
-  if (window.__tidytabsCommandBar) {
-    window.__tidytabsCommandBar.toggle();
+  if (window.__tuckdCommandBar) {
+    window.__tuckdCommandBar.toggle();
     return;
   }
 
@@ -19,7 +19,7 @@
   // ─── Create Shadow DOM host ─────────────────────────────────────────────────
 
   const host = document.createElement('div');
-  host.id = 'tidytabs-command-bar';
+  host.id = 'tuckd-command-bar';
   const shadow = host.attachShadow({ mode: 'closed' });
 
   // Load styles from extension — track ready state to avoid FOUC
@@ -462,7 +462,7 @@
 
   // ─── Public API ─────────────────────────────────────────────────────────────
 
-  window.__tidytabsCommandBar = { toggle, show, hide };
+  window.__tuckdCommandBar = { toggle, show, hide };
 
   // Show immediately on first injection
   show();

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate Tidytabs PNG icons using only Python stdlib.
+Generate Tuckd PNG icons using only Python stdlib.
 Creates icons/icon16.png, icons/icon48.png, icons/icon128.png
 """
 import struct, zlib, os, math
@@ -73,7 +73,7 @@ def draw_icon(size: int) -> list[tuple[int, int, int, int]]:
             t = (y + 0.5) / size
             bg = tuple(clamp(lerp(top_c[i], bot_c[i], t)) for i in range(3))
 
-            # ── Icon: hourglass / tidytabs glyph ───────────────────────────
+            # ── Icon: hourglass / tuckd glyph ───────────────────────────
             # Coordinate system: 0..1 within the icon
             nx = (x + 0.5) / size
             ny = (y + 0.5) / size

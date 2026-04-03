@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for Tidytabs
+about: Suggest an idea for Tuckd
 title: ''
 labels: enhancement
 assignees: ''
