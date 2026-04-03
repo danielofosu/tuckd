@@ -1,5 +1,5 @@
 /**
- * Tidytabs — Playwright extension test
+ * Tuckd — Playwright extension test
  * Loads the extension in Chromium, tests all three pages.
  * Run: node test.mjs
  */
@@ -22,7 +22,7 @@ async function screenshot(page, name) {
 }
 
 async function run() {
-  console.log('\n🔪 Tidytabs Extension Tests\n');
+  console.log('\n🔪 Tuckd Extension Tests\n');
 
   const userDataDir = path.join(__dirname, '.test-profile');
   fs.mkdirSync(userDataDir, { recursive: true });
@@ -85,7 +85,7 @@ async function run() {
       await page.waitForSelector('#enabled', { state: 'attached', timeout: 5000 });
 
       const title = await page.title();
-      console.assert(title === 'Tidytabs Settings', `Expected title "Tidytabs Settings", got "${title}"`);
+      console.assert(title === 'Tuckd Settings', `Expected title "Tuckd Settings", got "${title}"`);
 
       // Verify default toggle states
       const enabled = await page.$eval('#enabled', (el) => el.checked);
@@ -245,7 +245,7 @@ async function run() {
 
   // ── Test 6: Toggle disabled state ────────────────────────────────────────
   {
-    console.log('Test 6: Disabling Tidytabs disables archiving section');
+    console.log('Test 6: Disabling Tuckd disables archiving section');
     try {
       const page = await context.newPage();
       await page.goto(`${base}/settings.html`);
@@ -608,10 +608,10 @@ async function run() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          url: 'https://test-tidytabs.example.com/playwright-test',
+          url: 'https://test-tuckd.example.com/playwright-test',
           title: 'Playwright QMD Integration Test Page',
           description: 'A test page ingested during automated testing',
-          textSnippet: 'This is a unique snippet for testing QMD search functionality with Tidytabs extension.',
+          textSnippet: 'This is a unique snippet for testing QMD search functionality with Tuckd extension.',
         }),
         signal: AbortSignal.timeout(5000),
       });
@@ -625,7 +625,7 @@ async function run() {
       const searchData = await searchRes.json();
       console.assert(Array.isArray(searchData.results), 'Search should return results array');
 
-      const found = searchData.results.some((r) => r.url?.includes('test-tidytabs.example.com'));
+      const found = searchData.results.some((r) => r.url?.includes('test-tuckd.example.com'));
       console.log(`  Search results: ${searchData.results.length}, found test page: ${found}`);
       console.assert(found, 'Should find the ingested test page via BM25 keyword search');
 

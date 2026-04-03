@@ -1,4 +1,4 @@
-// Tidytabs — Popup
+// Tuckd — Popup
 
 if (!chrome.runtime?.id) location.reload();
 

@@ -1,4 +1,4 @@
-# Contributing to Tidytabs
+# Contributing to Tuckd
 
 Thanks for your interest in contributing!
 
@@ -26,7 +26,7 @@ Open an issue with:
 
 ## Feature requests
 
-Open an issue describing the use case. Tidytabs aims to stay simple and focused -- not every feature request will be accepted, but all are welcome for discussion.
+Open an issue describing the use case. Tuckd aims to stay simple and focused -- not every feature request will be accepted, but all are welcome for discussion.
 
 ## Code style
 

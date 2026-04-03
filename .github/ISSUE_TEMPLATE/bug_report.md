@@ -20,4 +20,4 @@ What you expected to happen instead.
 **Environment**
 - Chrome version:
 - OS:
-- Tidytabs version:
+- Tuckd version:

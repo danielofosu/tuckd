@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Tidytabs",
+  "name": "Tuckd",
   "version": "1.0.0",
-  "description": "Keep your browser tidy, automatically. Archive idle tabs and restore them anytime.",
+  "description": "Tuck away tabs you're not using. Auto-archive idle tabs and restore them anytime.",
   "permissions": ["tabs", "tabGroups", "storage", "alarms", "scripting", "bookmarks", "history"],
   "host_permissions": ["<all_urls>"],
   "content_security_policy": {
@@ -13,7 +13,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Tidytabs",
+    "default_title": "Tuckd",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

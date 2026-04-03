@@ -1,17 +1,17 @@
 <p align="center">
-  <img src="icons/icon128.png" width="80" alt="Tidytabs icon" />
+  <img src="icons/icon128.png" width="80" alt="Tuckd icon" />
 </p>
 
-<h1 align="center">Tidytabs</h1>
+<h1 align="center">Tuckd</h1>
 
 <p align="center">
-  Keep your browser tidy, automatically.<br/>
+  Tuck away tabs you're not using.<br/>
   A Chrome extension that archives inactive tabs and lets you restore them anytime.
 </p>
 
 <p align="center">
-  <a href="https://github.com/danielofosu/tidytabs/releases/latest"><img src="https://img.shields.io/github/v/release/danielofosu/tidytabs?style=flat-square" alt="Latest release" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/danielofosu/tidytabs?style=flat-square" alt="MIT License" /></a>
+  <a href="https://github.com/danielofosu/tuckd/releases/latest"><img src="https://img.shields.io/github/v/release/danielofosu/tuckd?style=flat-square" alt="Latest release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/danielofosu/tuckd?style=flat-square" alt="MIT License" /></a>
   <img src="https://img.shields.io/badge/manifest-v3-blue?style=flat-square" alt="Manifest V3" />
   <img src="https://img.shields.io/badge/chrome-120%2B-green?style=flat-square" alt="Chrome 120+" />
 </p>
@@ -22,7 +22,7 @@
 
 Chrome accumulates tabs. You open 5 for a task, forget about them, and suddenly you have 80. Arc solved this with auto-archive -- tabs you haven't touched in a while quietly close and save themselves for later. Chrome has no native equivalent.
 
-Tidytabs brings that behavior to Chrome: idle tabs get archived automatically, and you can restore any of them with a couple of keystrokes.
+Tuckd brings that behavior to Chrome: idle tabs get archived automatically, and you can restore any of them with a couple of keystrokes.
 
 ## Features
 
@@ -39,8 +39,8 @@ Tidytabs brings that behavior to Chrome: idle tabs get archived automatically, a
 
 ### From GitHub Releases (recommended)
 
-1. Go to [Releases](https://github.com/danielofosu/tidytabs/releases/latest)
-2. Download `tidytabs-vX.Y.Z.zip`
+1. Go to [Releases](https://github.com/danielofosu/tuckd/releases/latest)
+2. Download `tuckd-vX.Y.Z.zip`
 3. Unzip the file
 4. Open `chrome://extensions` in Chrome
 5. Enable **Developer mode** (top-right toggle)
@@ -49,15 +49,15 @@ Tidytabs brings that behavior to Chrome: idle tabs get archived automatically, a
 ### From source
 
 ```bash
-git clone https://github.com/danielofosu/tidytabs.git
-cd tidytabs
+git clone https://github.com/danielofosu/tuckd.git
+cd tuckd
 ```
 
 Then load unpacked in Chrome:
 
 1. Open `chrome://extensions`
 2. Enable **Developer mode**
-3. Click **Load unpacked** and select the `tidytabs` directory
+3. Click **Load unpacked** and select the `tuckd` directory
 
 No build step required -- the extension is plain JS/HTML/CSS.
 
@@ -65,7 +65,7 @@ No build step required -- the extension is plain JS/HTML/CSS.
 
 ### Auto-archiving
 
-Once installed, Tidytabs checks every 15 minutes for tabs that have been idle longer than your threshold (default: 12 hours). Matching tabs are archived and closed. A badge shows how many tabs were just archived.
+Once installed, Tuckd checks every 15 minutes for tabs that have been idle longer than your threshold (default: 12 hours). Matching tabs are archived and closed. A badge shows how many tabs were just archived.
 
 Configure the threshold and protection rules in the settings page (right-click the extension icon > Options).
 
@@ -103,7 +103,7 @@ Click the extension icon > **View Archive**, or use the command bar (`>archive`)
 The extension is plain JavaScript with no build step or dependencies.
 
 ```
-tidytabs/
+tuckd/
   manifest.json        MV3 manifest
   background.js        Service worker: alarms, cleanup, command bar search
   popup.html/js/css    Toolbar popup: status + stats
