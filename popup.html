@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tidytabs</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup">
+
+    <header class="popup-header">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3Z" fill="currentColor" opacity="0.15"/>
+          <path d="M12 6L14 10H10L12 6Z" fill="currentColor"/>
+          <path d="M9 11H15V13H9V11Z" fill="currentColor"/>
+          <path d="M10.5 14H13.5L12 18L10.5 14Z" fill="currentColor"/>
+        </svg>
+        <span class="brand-name">Tidytabs</span>
+      </div>
+      <div id="statusPill" class="status-pill">Active</div>
+    </header>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-value" id="archiveCount">—</div>
+        <div class="stat-label">archived</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-value" id="nextCheck">—</div>
+        <div class="stat-label">next check</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-value" id="lastCleaned">—</div>
+        <div class="stat-label">last cleaned</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn" id="btnArchive">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path d="M4 3a2 2 0 00-2 2v1.5h16V5a2 2 0 00-2-2H4z"/>
+          <path fill-rule="evenodd" d="M3 8.5v8a2 2 0 002 2h10a2 2 0 002-2v-8H3zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
+        </svg>
+        View Archive
+      </button>
+      <button class="action-btn" id="btnSettings">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+        </svg>
+        Settings
+      </button>
+    </div>
+
+    <div id="notice" class="notice hidden"></div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

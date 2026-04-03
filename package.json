@@ -1,0 +1,31 @@
+{
+  "name": "tidytabs",
+  "version": "1.0.0",
+  "description": "Keep your browser tidy, automatically. Archive idle tabs and restore them anytime.",
+  "private": true,
+  "scripts": {
+    "test": "node test.mjs",
+    "zip": "mkdir -p dist && zip -r dist/tidytabs-v$(node -p \"require('./package.json').version\").zip manifest.json background.js popup.html popup.js popup.css settings.html settings.js settings.css archive.html archive.js archive.css command-bar.js command-bar.css icons/ -x '*.DS_Store'",
+    "version": "node scripts/sync-version.js && git add manifest.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/creditornot/tidytabs.git"
+  },
+  "keywords": [
+    "chrome-extension",
+    "tab-manager",
+    "auto-archive",
+    "productivity",
+    "browser"
+  ],
+  "author": "Daniel Uuovits",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/creditornot/tidytabs/issues"
+  },
+  "homepage": "https://github.com/creditornot/tidytabs#readme",
+  "devDependencies": {
+    "playwright": "^1.50.0"
+  }
+}

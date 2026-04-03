@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tidytabs — Archive</title>
+  <link rel="stylesheet" href="archive.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+
+      <header>
+        <div class="header-top">
+          <div class="logo">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.12"/>
+              <path d="M12 6L14.5 10.5H9.5L12 6Z" fill="currentColor"/>
+              <rect x="8.5" y="11" width="7" height="2" rx="1" fill="currentColor"/>
+              <path d="M10 14H14L12 19L10 14Z" fill="currentColor"/>
+            </svg>
+            <div>
+              <h1>Archive</h1>
+              <p class="tagline" id="tabCount">Loading…</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-danger" id="btnClearAll">Clear All</button>
+            <button class="btn btn-ghost" id="btnSettings">Settings</button>
+          </div>
+        </div>
+
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+          </svg>
+          <input type="search" id="searchInput" class="search-input" placeholder="Search archived tabs…" />
+        </div>
+      </header>
+
+      <main id="archiveList"></main>
+
+      <div class="empty-state" id="emptyState" style="display:none">
+        <svg viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="20" fill="currentColor" opacity="0.08"/>
+          <path d="M16 16h16v4H16z" fill="currentColor" opacity="0.4"/>
+          <path d="M16 22h16v16H16z" fill="currentColor" opacity="0.2"/>
+          <path d="M20 27h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p>No archived tabs yet.</p>
+        <p class="sub">Tabs you haven't visited in a while will appear here.</p>
+      </div>
+
+    </div>
+  </div>
+  <script src="archive.js"></script>
+</body>
+</html>

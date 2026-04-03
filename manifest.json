@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Tidytabs",
+  "version": "1.0.0",
+  "description": "Keep your browser tidy, automatically. Archive idle tabs and restore them anytime.",
+  "permissions": ["tabs", "tabGroups", "storage", "alarms", "scripting", "bookmarks", "history"],
+  "host_permissions": ["<all_urls>"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tidytabs",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "settings.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "open-command-bar": {
+      "suggested_key": {
+        "default": "Ctrl+E",
+        "mac": "Command+E"
+      },
+      "description": "Open command bar"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["command-bar.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
