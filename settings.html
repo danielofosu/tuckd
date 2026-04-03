@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tidytabs Settings</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+
+      <!-- Header -->
+      <header>
+        <div class="logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.12"/>
+            <path d="M12 6L14.5 10.5H9.5L12 6Z" fill="currentColor"/>
+            <rect x="8.5" y="11" width="7" height="2" rx="1" fill="currentColor"/>
+            <path d="M10 14H14L12 19L10 14Z" fill="currentColor"/>
+          </svg>
+          <h1>Tidytabs</h1>
+        </div>
+        <p class="tagline">Archive inactive tabs automatically, just like Arc.</p>
+      </header>
+
+      <!-- Enable toggle -->
+      <div class="card">
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Enable Tidytabs</span>
+            <span class="desc">Automatically archive inactive tabs on schedule</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="enabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Archiving section -->
+      <div class="card" id="archivingCard">
+        <h2 class="section-label">Archiving</h2>
+
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Archive tabs after</span>
+            <span class="desc">Tabs not visited for this long will be archived</span>
+          </div>
+          <select id="archiveAfterHours" class="select">
+            <option value="1">1 hour</option>
+            <option value="2">2 hours</option>
+            <option value="4">4 hours</option>
+            <option value="8">8 hours</option>
+            <option value="12">12 hours</option>
+            <option value="24">1 day</option>
+            <option value="48">2 days</option>
+            <option value="168">1 week</option>
+            <option value="336">2 weeks</option>
+            <option value="720">30 days</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Protect pinned tabs</span>
+            <span class="desc">Pinned tabs are never archived</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="protectPinned" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Protect tabs with audio</span>
+            <span class="desc">Audible tabs (music, video, calls) stay open</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="protectAudible" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Protect grouped tabs</span>
+            <span class="desc">Tabs in a group are never archived</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="protectGrouped" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Archive management -->
+      <div class="card">
+        <h2 class="section-label">Archive</h2>
+
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Clear archive after</span>
+            <span class="desc">Older archived tabs are permanently deleted</span>
+          </div>
+          <select id="clearArchiveAfterDays" class="select">
+            <option value="7">7 days</option>
+            <option value="30">30 days</option>
+            <option value="90">90 days</option>
+            <option value="0">Never</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Archived tabs</span>
+            <span class="desc" id="archiveCountDesc">Loading…</span>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-ghost" id="btnViewArchive">View Archive</button>
+            <button class="btn btn-danger" id="btnClearArchive">Clear All</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manual trigger -->
+      <div class="card">
+        <div class="row">
+          <div class="row-info">
+            <span class="label">Run cleanup now</span>
+            <span class="desc">Archive all tabs that exceed the current threshold</span>
+          </div>
+          <button class="btn btn-primary" id="btnRunNow">Run Now</button>
+        </div>
+      </div>
+
+      <footer>
+        <span>Tidytabs checks every 15 minutes · <a href="archive.html" id="footerArchiveLink">View Archive</a></span>
+        <div id="saveIndicator" class="save-indicator hidden">Saved</div>
+      </footer>
+
+    </div>
+  </div>
+  <script src="settings.js"></script>
+</body>
+</html>
