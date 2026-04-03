@@ -32,6 +32,29 @@ async function sendMsg(msg) {
   }
 }
 
+// ─── Shortcut status ──────────────────────────────────────────────────────────
+async function checkShortcutStatus() {
+  const statusEl = document.getElementById('shortcutStatus');
+  const warningEl = document.getElementById('shortcutWarning');
+
+  try {
+    const commands = await chrome.commands.getAll();
+    const cmd = commands.find((c) => c.name === 'open-command-bar');
+    const shortcut = cmd?.shortcut || '';
+
+    if (shortcut) {
+      statusEl.textContent = shortcut;
+      warningEl.classList.add('hidden');
+    } else {
+      statusEl.textContent = 'Not assigned';
+      warningEl.classList.remove('hidden');
+    }
+  } catch {
+    statusEl.textContent = 'Unable to check';
+    warningEl.classList.remove('hidden');
+  }
+}
+
 // ─── Load settings ─────────────────────────────────────────────────────────────
 async function loadSettings() {
   const { settings = {}, archive = [] } = await chrome.storage.local.get([
@@ -91,6 +114,11 @@ function wireControls() {
     document.getElementById(id).addEventListener('change', saveSettings);
   }
 
+  // Configure shortcut
+  document.getElementById('btnConfigureShortcut').addEventListener('click', () => {
+    chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+  });
+
   // View archive
   document.getElementById('btnViewArchive').addEventListener('click', () => {
     chrome.tabs.create({ url: chrome.runtime.getURL('archive.html') });
@@ -136,4 +164,5 @@ function wireControls() {
 
 // ─── Init ──────────────────────────────────────────────────────────────────────
 loadSettings();
+checkShortcutStatus();
 wireControls();
