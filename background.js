@@ -34,25 +34,25 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.action === 'runNow') {
-    runCleanup().then((result) => sendResponse(result));
+    runCleanup().then((result) => sendResponse(result)).catch(() => sendResponse(null));
     return true;
   }
   if (msg.action === 'getStats') {
-    getStats().then((stats) => sendResponse(stats));
+    getStats().then((stats) => sendResponse(stats)).catch(() => sendResponse(null));
     return true;
   }
   if (msg.action === 'getNextAlarm') {
     chrome.alarms.get(CLEANUP_ALARM).then((alarm) => {
       sendResponse({ scheduledTime: alarm ? alarm.scheduledTime : null });
-    });
+    }).catch(() => sendResponse(null));
     return true;
   }
   if (msg.action === 'commandBarSearch') {
-    commandBarSearch(msg.query).then((results) => sendResponse(results));
+    commandBarSearch(msg.query).then((results) => sendResponse(results)).catch(() => sendResponse(null));
     return true;
   }
   if (msg.action === 'commandBarAction') {
-    commandBarAction(msg.item).then(() => sendResponse({ ok: true }));
+    commandBarAction(msg.item).then(() => sendResponse({ ok: true })).catch(() => sendResponse(null));
     return true;
   }
   if (msg.action === 'commandBarQuickActions') {
@@ -60,7 +60,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     return false;
   }
   if (msg.action === 'commandBarQuickAction') {
-    executeQuickAction(msg.commandId, msg.arg).then((result) => sendResponse(result));
+    executeQuickAction(msg.commandId, msg.arg).then((result) => sendResponse(result)).catch(() => sendResponse(null));
     return true;
   }
 });
@@ -429,8 +429,10 @@ async function commandBarSearch(query) {
   ].filter((item) => item.score > 0);
 
   // Deduplicate by normalized URL — keep highest score
+  // Skip items with empty URLs (workspaces) to avoid collision
   const seen = new Map();
   for (const item of all) {
+    if (!item.url) { seen.set(`_ws_${item.workspaceName || Math.random()}`, item); continue; }
     const key = normalizeUrl(item.url);
     const existing = seen.get(key);
     if (!existing || item.score > existing.score) {
@@ -543,7 +545,7 @@ async function runCleanup() {
     if (tab.audible && settings.protectAudible) continue;
     if (tab.groupId !== -1 && settings.protectGrouped) continue;
 
-    const lastAccessed = tab.lastAccessed || 0;
+    const lastAccessed = tab.lastAccessed || now;
     const idleMs = now - lastAccessed;
 
     if (idleMs >= thresholdMs) {
