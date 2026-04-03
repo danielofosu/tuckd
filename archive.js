@@ -170,8 +170,12 @@ function updateHeader(count) {
 async function restoreTab(url, archivedAt) {
   const item = allItems.find((a) => a.url === url && a.archivedAt === archivedAt);
   if (!item) return;
-  chrome.tabs.create({ url: item.url, active: true });
-  await deleteTab(url, archivedAt);
+  try {
+    await chrome.tabs.create({ url: item.url, active: true });
+    await deleteTab(url, archivedAt);
+  } catch {
+    // Tab creation failed — don't remove from archive
+  }
 }
 
 async function deleteTab(url, archivedAt) {
