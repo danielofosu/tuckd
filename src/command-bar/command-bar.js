@@ -26,7 +26,7 @@
   let styleReady = false;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = chrome.runtime.getURL('command-bar.css');
+  link.href = chrome.runtime.getURL('src/command-bar/command-bar.css');
   link.onload = () => { styleReady = true; };
   shadow.appendChild(link);
 
