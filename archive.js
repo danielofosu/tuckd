@@ -102,17 +102,17 @@ function buildTabItem(item, index, query = '') {
   `;
 
   // Clicking the title/url area opens the tab
-  div.querySelector('.tab-body').addEventListener('click', () => restoreTab(index));
+  div.querySelector('.tab-body').addEventListener('click', () => restoreTab(item.url, item.archivedAt));
   div.querySelector('.tab-title').style.cursor = 'pointer';
 
   div.querySelector('.restore').addEventListener('click', (e) => {
     e.stopPropagation();
-    restoreTab(index);
+    restoreTab(item.url, item.archivedAt);
   });
 
   div.querySelector('.delete').addEventListener('click', (e) => {
     e.stopPropagation();
-    deleteTab(index);
+    deleteTab(item.url, item.archivedAt);
   });
 
   return div;
@@ -167,15 +167,15 @@ function updateHeader(count) {
 
 // ─── Actions ───────────────────────────────────────────────────────────────────
 
-async function restoreTab(index) {
-  const item = allItems[index];
+async function restoreTab(url, archivedAt) {
+  const item = allItems.find((a) => a.url === url && a.archivedAt === archivedAt);
   if (!item) return;
   chrome.tabs.create({ url: item.url, active: true });
-  await deleteTab(index);
+  await deleteTab(url, archivedAt);
 }
 
-async function deleteTab(index) {
-  allItems.splice(index, 1);
+async function deleteTab(url, archivedAt) {
+  allItems = allItems.filter((a) => !(a.url === url && a.archivedAt === archivedAt));
   await chrome.storage.local.set({ archive: allItems });
   const query = document.getElementById('searchInput').value.trim().toLowerCase();
   const filtered = query ? allItems.filter((i) => matchesQuery(i, query)) : allItems;

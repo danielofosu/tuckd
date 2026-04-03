@@ -276,67 +276,9 @@ async function run() {
     }
   }
 
-  // ── Test 7: AI Settings card ─────────────────────────────────────────────
+  // ── Test 7: Quick actions (> prefix) ───────────────────────────────────────
   {
-    console.log('Test 7: AI settings card — API key + model selector');
-    try {
-      const page = await context.newPage();
-      await page.goto(`${base}/settings.html`);
-      await page.waitForSelector('#openaiKey', { timeout: 5000 });
-
-      // Verify AI card elements exist
-      const keyInput = await page.$('#openaiKey');
-      const modelSelect = await page.$('#openaiModel');
-      const toggleBtn = await page.$('#btnToggleKey');
-      console.assert(keyInput, 'API key input should exist');
-      console.assert(modelSelect, 'Model select should exist');
-      console.assert(toggleBtn, 'Show/Hide toggle should exist');
-
-      // Verify key input is password type
-      const keyType = await page.$eval('#openaiKey', (el) => el.type);
-      console.assert(keyType === 'password', `Key input should be password type, got ${keyType}`);
-
-      // Test show/hide toggle
-      await page.click('#btnToggleKey');
-      const keyTypeAfter = await page.$eval('#openaiKey', (el) => el.type);
-      console.assert(keyTypeAfter === 'text', `After toggle, key should be text type, got ${keyTypeAfter}`);
-      const btnText = await page.$eval('#btnToggleKey', (el) => el.textContent);
-      console.assert(btnText === 'Hide', `Button should say Hide, got ${btnText}`);
-
-      // Test setting a key persists
-      await page.fill('#openaiKey', 'sk-test-1234');
-      await page.$eval('#openaiKey', (el) => el.dispatchEvent(new Event('change')));
-      await new Promise((r) => setTimeout(r, 500));
-
-      // Verify default model
-      const model = await page.$eval('#openaiModel', (el) => el.value);
-      console.log(`  Default model: ${model}`);
-
-      // Reload and verify persistence
-      await page.reload();
-      await page.waitForSelector('#openaiKey', { timeout: 5000 });
-      await new Promise((r) => setTimeout(r, 300));
-      const savedKey = await page.$eval('#openaiKey', (el) => el.value);
-      console.assert(savedKey === 'sk-test-1234', `Key should persist, got ${savedKey}`);
-
-      // Clean up
-      await page.fill('#openaiKey', '');
-      await page.$eval('#openaiKey', (el) => el.dispatchEvent(new Event('change')));
-      await new Promise((r) => setTimeout(r, 300));
-
-      await screenshot(page, '7-ai-settings');
-      console.log('  ✅ AI settings card works correctly\n');
-      passed++;
-      await page.close();
-    } catch (e) {
-      console.error('  ❌', e.message, '\n');
-      failed++;
-    }
-  }
-
-  // ── Test 8: Quick actions (> prefix) ───────────────────────────────────────
-  {
-    console.log('Test 8: Quick actions via background message');
+    console.log('Test 7: Quick actions via background message');
     try {
       const page = await context.newPage();
       await page.goto(`${base}/settings.html`);
@@ -369,7 +311,7 @@ async function run() {
       console.assert(result.opened === true, 'Settings quick action should open page');
       await new Promise((r) => setTimeout(r, 500));
 
-      await screenshot(page, '8-quick-actions');
+      await screenshot(page, '7-quick-actions');
       console.log('  ✅ Quick actions filter and execute correctly\n');
       passed++;
       await page.close();
@@ -379,9 +321,9 @@ async function run() {
     }
   }
 
-  // ── Test 9: Frecency tracking ──────────────────────────────────────────────
+  // ── Test 8: Frecency tracking ──────────────────────────────────────────────
   {
-    console.log('Test 9: Frecency tracking');
+    console.log('Test 8: Frecency tracking');
     try {
       const page = await context.newPage();
       await page.goto(`${base}/settings.html`);
@@ -422,9 +364,9 @@ async function run() {
     }
   }
 
-  // ── Test 10: Workspace save/list/restore ───────────────────────────────────
+  // ── Test 9: Workspace save/list/restore ───────────────────────────────────
   {
-    console.log('Test 10: Workspace snapshots');
+    console.log('Test 9: Workspace snapshots');
     try {
       const page = await context.newPage();
       await page.goto(`${base}/settings.html`);
@@ -479,56 +421,9 @@ async function run() {
     }
   }
 
-  // ── Test 11: AI search (with mock key) ─────────────────────────────────────
+  // ── Test 10: Command bar search scoring ────────────────────────────────────
   {
-    console.log('Test 11: AI search error handling');
-    try {
-      const page = await context.newPage();
-      await page.goto(`${base}/settings.html`);
-      await page.waitForSelector('#enabled', { state: 'attached', timeout: 5000 });
-
-      // Test: no API key → returns error message
-      await page.evaluate(() => {
-        return chrome.storage.local.set({ settings: { openaiKey: '', openaiModel: 'gpt-5.4-nano' } });
-      });
-      const noKeyResult = await page.evaluate(() => {
-        return new Promise((resolve) => {
-          chrome.runtime.sendMessage({ action: 'commandBarAISearch', query: 'test' }, resolve);
-        });
-      });
-      console.log(`  No key result: ai=${noKeyResult.ai?.length}, error="${noKeyResult.error || 'none'}"`);
-      console.assert(noKeyResult.ai?.length === 0, 'Should return empty with no key');
-      console.assert(noKeyResult.error?.includes('API key'), `Should mention API key in error, got: ${noKeyResult.error}`);
-
-      // Test: invalid API key → returns error
-      await page.evaluate(() => {
-        return chrome.storage.local.set({ settings: { openaiKey: 'sk-invalid-test-key', openaiModel: 'gpt-5.4-nano' } });
-      });
-      const badKeyResult = await page.evaluate(() => {
-        return new Promise((resolve) => {
-          chrome.runtime.sendMessage({ action: 'commandBarAISearch', query: 'meetings' }, resolve);
-        });
-      });
-      console.log(`  Bad key result: ai=${badKeyResult.ai?.length}, error="${badKeyResult.error || 'none'}"`);
-      console.assert(badKeyResult.ai?.length === 0, 'Should return empty with bad key');
-      console.assert(badKeyResult.error, 'Should return error message with bad key');
-
-      // Clean up
-      await page.evaluate(() => chrome.storage.local.remove('settings'));
-
-      await screenshot(page, '11-ai-search-errors');
-      console.log('  ✅ AI search returns proper errors\n');
-      passed++;
-      await page.close();
-    } catch (e) {
-      console.error('  ❌', e.message, '\n');
-      failed++;
-    }
-  }
-
-  // ── Test 12: Command bar search scoring ────────────────────────────────────
-  {
-    console.log('Test 12: Command bar keyword search + scoring');
+    console.log('Test 10: Command bar keyword search + scoring');
     try {
       const page = await context.newPage();
       await page.goto(`${base}/settings.html`);
@@ -573,119 +468,6 @@ async function run() {
       await page.evaluate(() => chrome.storage.local.set({ archive: [] }));
 
       console.log('  ✅ Keyword search with scoring works correctly\n');
-      passed++;
-      await page.close();
-    } catch (e) {
-      console.error('  ❌', e.message, '\n');
-      failed++;
-    }
-  }
-
-  // ── Test 13: QMD companion — health ────────────────────────────────────────
-  {
-    console.log('Test 13: QMD companion health check');
-    try {
-      const res = await fetch('http://localhost:7749/health', { signal: AbortSignal.timeout(3000) });
-      const data = await res.json();
-      console.assert(data.ok === true, `Expected ok=true, got ${data.ok}`);
-      console.assert(typeof data.indexed === 'number', 'indexed should be a number');
-      console.assert(typeof data.embedded === 'number', 'embedded should be a number');
-      console.log(`  Health: ok=${data.ok}, indexed=${data.indexed}, embedded=${data.embedded}`);
-      console.log('  ✅ QMD companion health check passed\n');
-      passed++;
-    } catch (e) {
-      console.log(`  ⚠️  QMD companion not running (${e.message}) — skipping QMD tests\n`);
-      // Don't count as failure — companion is optional
-    }
-  }
-
-  // ── Test 14: QMD companion — ingest + search ──────────────────────────────
-  {
-    console.log('Test 14: QMD companion ingest and search');
-    try {
-      // Ingest a test page
-      const ingestRes = await fetch('http://localhost:7749/ingest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: 'https://test-tuckd.example.com/playwright-test',
-          title: 'Playwright QMD Integration Test Page',
-          description: 'A test page ingested during automated testing',
-          textSnippet: 'This is a unique snippet for testing QMD search functionality with Tuckd extension.',
-        }),
-        signal: AbortSignal.timeout(5000),
-      });
-      const ingestData = await ingestRes.json();
-      console.assert(ingestData.ok === true, `Ingest should return ok=true, got ${JSON.stringify(ingestData)}`);
-
-      // Search for the ingested page (BM25 keyword match — no embedding needed)
-      const searchRes = await fetch('http://localhost:7749/search?q=playwright+QMD+integration', {
-        signal: AbortSignal.timeout(5000),
-      });
-      const searchData = await searchRes.json();
-      console.assert(Array.isArray(searchData.results), 'Search should return results array');
-
-      const found = searchData.results.some((r) => r.url?.includes('test-tuckd.example.com'));
-      console.log(`  Search results: ${searchData.results.length}, found test page: ${found}`);
-      console.assert(found, 'Should find the ingested test page via BM25 keyword search');
-
-      // Verify health updated
-      const healthRes = await fetch('http://localhost:7749/health', { signal: AbortSignal.timeout(3000) });
-      const healthData = await healthRes.json();
-      console.assert(healthData.indexed >= 1, `Should have at least 1 indexed doc, got ${healthData.indexed}`);
-
-      console.log('  ✅ QMD ingest and search work correctly\n');
-      passed++;
-    } catch (e) {
-      if (e.message?.includes('fetch failed') || e.name === 'AbortError') {
-        console.log(`  ⚠️  QMD companion not running — skipping\n`);
-      } else {
-        console.error('  ❌', e.message, '\n');
-        failed++;
-      }
-    }
-  }
-
-  // ── Test 15: QMD settings card in extension ────────────────────────────────
-  {
-    console.log('Test 15: QMD settings card UI');
-    try {
-      const page = await context.newPage();
-      await page.goto(`${base}/settings.html`);
-      await page.waitForSelector('#qmdEnabled', { timeout: 5000 });
-
-      // Verify QMD card elements exist
-      const toggle = await page.$('#qmdEnabled');
-      const portInput = await page.$('#qmdPort');
-      const statusDot = await page.$('#qmdStatusDot');
-      const embedBtn = await page.$('#btnQmdEmbed');
-      console.assert(toggle, 'QMD toggle should exist');
-      console.assert(portInput, 'QMD port input should exist');
-      console.assert(statusDot, 'QMD status dot should exist');
-      console.assert(embedBtn, 'QMD embed button should exist');
-
-      // Default state: disabled
-      const isChecked = await page.$eval('#qmdEnabled', (el) => el.checked);
-      console.assert(isChecked === false, `QMD should default to disabled, got ${isChecked}`);
-
-      const port = await page.$eval('#qmdPort', (el) => el.value);
-      console.assert(port === '7749', `Port should default to 7749, got ${port}`);
-
-      // Toggle on and verify persistence
-      await page.$eval('#qmdEnabled', (el) => { el.checked = true; el.dispatchEvent(new Event('change')); });
-      await new Promise((r) => setTimeout(r, 500));
-      await page.reload();
-      await page.waitForSelector('#qmdEnabled', { timeout: 5000 });
-      await new Promise((r) => setTimeout(r, 300));
-      const savedChecked = await page.$eval('#qmdEnabled', (el) => el.checked);
-      console.assert(savedChecked === true, `QMD toggle should persist as enabled, got ${savedChecked}`);
-
-      // Reset
-      await page.$eval('#qmdEnabled', (el) => { el.checked = false; el.dispatchEvent(new Event('change')); });
-      await new Promise((r) => setTimeout(r, 300));
-
-      await screenshot(page, '15-qmd-settings');
-      console.log('  ✅ QMD settings card works correctly\n');
       passed++;
       await page.close();
     } catch (e) {

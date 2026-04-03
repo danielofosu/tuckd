@@ -16,6 +16,15 @@ const CLEANUP_ALARM = 'cleanup';
 const CLEAR_OLD_ALARM = 'clearOldArchive';
 const BADGE_CLEAR_ALARM = 'badgeClear';
 
+// Serialize read-modify-write on chrome.storage.local to prevent races.
+// Multiple async operations (cleanup, restore, focus) can interleave
+// reads and writes on the same key, causing data loss.
+let _archiveLock = Promise.resolve();
+function withArchiveLock(fn) {
+  _archiveLock = _archiveLock.then(fn, fn);
+  return _archiveLock;
+}
+
 // Register listeners at top level so they survive SW restarts
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === CLEANUP_ALARM) await runCleanup();
@@ -175,8 +184,10 @@ async function executeQuickAction(commandId, arg) {
         toClose.push(tab.id);
       }
       if (toArchive.length > 0) {
-        const { archive = [] } = await chrome.storage.local.get('archive');
-        await chrome.storage.local.set({ archive: [...toArchive, ...archive].slice(0, ARCHIVE_MAX) });
+        await withArchiveLock(async () => {
+          const { archive = [] } = await chrome.storage.local.get('archive');
+          await chrome.storage.local.set({ archive: [...toArchive, ...archive].slice(0, ARCHIVE_MAX) });
+        });
         for (const id of toClose) {
           try { await chrome.tabs.remove(id); } catch { /* already closed */ }
         }
@@ -456,9 +467,11 @@ async function commandBarAction(item) {
 
   if (item.source === 'archive') {
     await chrome.tabs.create({ url: item.url });
-    const { archive = [] } = await chrome.storage.local.get('archive');
-    const filtered = archive.filter((a) => !(a.url === item.url && a.archivedAt === item.timestamp));
-    await chrome.storage.local.set({ archive: filtered });
+    await withArchiveLock(async () => {
+      const { archive = [] } = await chrome.storage.local.get('archive');
+      const filtered = archive.filter((a) => !(a.url === item.url && a.archivedAt === item.timestamp));
+      await chrome.storage.local.set({ archive: filtered });
+    });
     return;
   }
 
@@ -546,9 +559,11 @@ async function runCleanup() {
   }
 
   if (toArchive.length > 0) {
-    const { archive = [] } = await chrome.storage.local.get('archive');
-    const newArchive = [...toArchive, ...archive].slice(0, ARCHIVE_MAX);
-    await chrome.storage.local.set({ archive: newArchive });
+    await withArchiveLock(async () => {
+      const { archive = [] } = await chrome.storage.local.get('archive');
+      const newArchive = [...toArchive, ...archive].slice(0, ARCHIVE_MAX);
+      await chrome.storage.local.set({ archive: newArchive });
+    });
 
     for (const id of idsToClose) {
       try { await chrome.tabs.remove(id); } catch { /* tab already gone */ }
@@ -571,9 +586,11 @@ async function clearOldArchive() {
   if (settings.clearArchiveAfterDays === 0) return; // "Never"
 
   const cutoff = Date.now() - settings.clearArchiveAfterDays * 24 * 60 * 60 * 1000;
-  const { archive = [] } = await chrome.storage.local.get('archive');
-  const filtered = archive.filter((item) => item.archivedAt > cutoff);
-  if (filtered.length !== archive.length) {
-    await chrome.storage.local.set({ archive: filtered });
-  }
+  await withArchiveLock(async () => {
+    const { archive = [] } = await chrome.storage.local.get('archive');
+    const filtered = archive.filter((item) => item.archivedAt > cutoff);
+    if (filtered.length !== archive.length) {
+      await chrome.storage.local.set({ archive: filtered });
+    }
+  });
 }
