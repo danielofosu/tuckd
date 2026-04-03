@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/creditornot/tidytabs.git"
+    "url": "https://github.com/danielofosu/tidytabs.git"
   },
   "keywords": [
     "chrome-extension",
@@ -22,9 +22,9 @@
   "author": "Daniel Uuovits",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creditornot/tidytabs/issues"
+    "url": "https://github.com/danielofosu/tidytabs/issues"
   },
-  "homepage": "https://github.com/creditornot/tidytabs#readme",
+  "homepage": "https://github.com/danielofosu/tidytabs#readme",
   "devDependencies": {
     "playwright": "^1.50.0"
   }

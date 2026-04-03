@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/creditornot/tidytabs/releases/latest"><img src="https://img.shields.io/github/v/release/creditornot/tidytabs?style=flat-square" alt="Latest release" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/creditornot/tidytabs?style=flat-square" alt="MIT License" /></a>
+  <a href="https://github.com/danielofosu/tidytabs/releases/latest"><img src="https://img.shields.io/github/v/release/danielofosu/tidytabs?style=flat-square" alt="Latest release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/danielofosu/tidytabs?style=flat-square" alt="MIT License" /></a>
   <img src="https://img.shields.io/badge/manifest-v3-blue?style=flat-square" alt="Manifest V3" />
   <img src="https://img.shields.io/badge/chrome-120%2B-green?style=flat-square" alt="Chrome 120+" />
 </p>
@@ -39,7 +39,7 @@ Tidytabs brings that behavior to Chrome: idle tabs get archived automatically, a
 
 ### From GitHub Releases (recommended)
 
-1. Go to [Releases](https://github.com/creditornot/tidytabs/releases/latest)
+1. Go to [Releases](https://github.com/danielofosu/tidytabs/releases/latest)
 2. Download `tidytabs-vX.Y.Z.zip`
 3. Unzip the file
 4. Open `chrome://extensions` in Chrome
@@ -49,7 +49,7 @@ Tidytabs brings that behavior to Chrome: idle tabs get archived automatically, a
 ### From source
 
 ```bash
-git clone https://github.com/creditornot/tidytabs.git
+git clone https://github.com/danielofosu/tidytabs.git
 cd tidytabs
 ```
 
