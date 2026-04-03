@@ -63,7 +63,7 @@ async function loadPopup() {
 }
 
 document.getElementById('btnArchive').addEventListener('click', () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL('archive.html') });
+  chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
   window.close();
 });
 

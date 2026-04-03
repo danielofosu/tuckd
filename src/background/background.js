@@ -76,18 +76,18 @@ chrome.commands.onCommand.addListener(async (command) => {
   // Fallback: chrome:// pages can't run content scripts
   const url = activeTab.url || '';
   if (url.startsWith('chrome://') || url.startsWith('chrome-extension://') || url.startsWith('about:')) {
-    chrome.tabs.create({ url: chrome.runtime.getURL('archive.html') });
+    chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
     return;
   }
 
   try {
     await chrome.scripting.executeScript({
       target: { tabId: activeTab.id },
-      files: ['command-bar.js'],
+      files: ['src/command-bar/command-bar.js'],
     });
   } catch {
     // Content script injection failed — open archive as fallback
-    chrome.tabs.create({ url: chrome.runtime.getURL('archive.html') });
+    chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
   }
 });
 
@@ -195,11 +195,11 @@ async function executeQuickAction(commandId, arg) {
       return { archived: toArchive.length };
     }
     case 'settings': {
-      await chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') });
+      await chrome.tabs.create({ url: chrome.runtime.getURL('src/settings/settings.html') });
       return { opened: true };
     }
     case 'archive': {
-      await chrome.tabs.create({ url: chrome.runtime.getURL('archive.html') });
+      await chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
       return { opened: true };
     }
     case 'save-workspace': {

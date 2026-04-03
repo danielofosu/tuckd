@@ -121,13 +121,13 @@ function wireControls() {
 
   // View archive
   document.getElementById('btnViewArchive').addEventListener('click', () => {
-    chrome.tabs.create({ url: chrome.runtime.getURL('archive.html') });
+    chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
   });
 
   // Footer archive link
   document.getElementById('footerArchiveLink').addEventListener('click', (e) => {
     e.preventDefault();
-    chrome.tabs.create({ url: chrome.runtime.getURL('archive.html') });
+    chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
   });
 
   // Clear archive

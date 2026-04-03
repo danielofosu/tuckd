@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "node test.mjs",
-    "zip": "mkdir -p dist && zip -r dist/tuckd-v$(node -p \"require('./package.json').version\").zip manifest.json background.js popup.html popup.js popup.css settings.html settings.js settings.css archive.html archive.js archive.css command-bar.js command-bar.css icons/ -x '*.DS_Store'",
+    "zip": "mkdir -p dist && zip -r dist/tuckd-v$(node -p \"require('./package.json').version\").zip manifest.json src/ icons/ -x '*.DS_Store'",
     "version": "node scripts/sync-version.js && git add manifest.json"
   },
   "repository": {
