@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
   <title>Tuckd Settings</title>
   <link rel="stylesheet" href="settings.css" />
 </head>
@@ -10,8 +11,24 @@
   <div class="page">
     <div class="container">
 
+      <!-- Impact (monthly) -->
+      <section class="impact-card" aria-labelledby="impact-heading">
+        <div class="impact-inner">
+          <div class="impact-copy">
+            <h2 id="impact-heading" class="impact-title">Impact this month</h2>
+            <p class="impact-line impact-line-primary">
+              <span id="impactTabs">—</span>
+              <span class="impact-muted"> tabs tucked away</span>
+            </p>
+            <p class="impact-line impact-line-metric" id="impactRam">~— memory freed (est.)</p>
+            <p class="impact-footnote">Estimate uses ~45 MB per tab (typical page); actual savings vary by site.</p>
+          </div>
+          <div class="impact-visual" aria-hidden="true"></div>
+        </div>
+      </section>
+
       <!-- Header -->
-      <header>
+      <header class="hero">
         <div class="logo">
           <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.12"/>

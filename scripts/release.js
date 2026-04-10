@@ -98,7 +98,6 @@ function categorizeCommits(commits) {
   for (const commit of commits) {
     let subject = commit.subject;
     // Strip conventional commit prefix
-    const match = subject.match(/^(?:\w+\(!?\))?:\s*(.+)/);
     const cleanMatch = subject.match(/^(?:\w+\(!?\))?:\s*(.+)/);
     let clean = cleanMatch ? cleanMatch[1] : subject;
     // Capitalize first letter

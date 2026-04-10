@@ -24,6 +24,12 @@ function formatCountdown(scheduledTime) {
   return `${Math.ceil(minutes / 60)}h`;
 }
 
+function formatEstRamMb(mb) {
+  if (mb == null || mb <= 0) return '~0 MB';
+  if (mb >= 1024) return `~${(mb / 1024).toFixed(1)} GB freed`;
+  return `~${Math.round(mb)} MB freed`;
+}
+
 // sendMessage wrapper that retries once after waking the service worker
 async function sendMsg(msg) {
   try {
@@ -44,6 +50,13 @@ async function loadPopup() {
   const archiveCount = document.getElementById('archiveCount');
   const nextCheck = document.getElementById('nextCheck');
   const lastCleaned = document.getElementById('lastCleaned');
+  const tabsThisMonth = document.getElementById('tabsThisMonth');
+  const ramThisMonth = document.getElementById('ramThisMonth');
+  const kbdMod = document.getElementById('kbdMod');
+
+  if (kbdMod) {
+    kbdMod.textContent = /Mac|iPhone|iPad/i.test(navigator.userAgent) ? '⌘' : 'Ctrl';
+  }
 
   // Load settings + stats in parallel
   const [{ settings = {} }, statsResp, alarmResp] = await Promise.all([
@@ -60,6 +73,10 @@ async function loadPopup() {
   archiveCount.textContent = statsResp?.archiveCount ?? '0';
   lastCleaned.textContent = formatRelativeTime(statsResp?.lastCleanup);
   nextCheck.textContent = enabled ? formatCountdown(alarmResp?.scheduledTime) : '—';
+
+  const monthTabs = statsResp?.tabsArchivedThisMonth ?? 0;
+  tabsThisMonth.textContent = String(monthTabs);
+  ramThisMonth.textContent = formatEstRamMb(statsResp?.estRamMbThisMonth);
 }
 
 document.getElementById('btnArchive').addEventListener('click', () => {
