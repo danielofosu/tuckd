@@ -4,6 +4,21 @@ All notable changes to Tuckd will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-04-10
+
+### Added
+- Feat: monthly impact stats, refreshed popup and settings UI
+
+### Internal
+- Chore: use --no-verify for release version commits on main
+
+### Other
+- Merge branch 'dev'
+- Trigger release on merge to main instead of manual tag (#2)
+- Reorganize source files into src/ folder structure (#1)
+- Reorganize source files into src/ folder structure
+
+
 ## [1.0.1] - 2026-04-03
 
 ### Internal
