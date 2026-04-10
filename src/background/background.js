@@ -69,27 +69,63 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
 // ─── Command bar ──────────────────────────────────────────────────────────────
 
+const COMMAND_BAR_PAGE = chrome.runtime.getURL('src/command-bar/command-bar-page.html');
+
+/** Pages where scripting/injection is blocked or flaky — open dedicated extension UI. */
+function needsCommandBarFallbackPage(url) {
+  if (!url || url === 'about:blank') return true;
+  const u = url.toLowerCase();
+  if (u.startsWith('chrome://')) return true;
+  if (u.startsWith('about:')) return true;
+  if (u.startsWith('edge://')) return true;
+  if (u.startsWith('devtools://')) return true;
+  if (u.startsWith('chrome-extension://')) {
+    const selfOrigin = chrome.runtime.getURL('');
+    return !u.startsWith(selfOrigin.toLowerCase());
+  }
+  if (u.includes('chromewebstore.google.com')) return true;
+  return false;
+}
+
+async function openCommandBarFallbackTab() {
+  await chrome.tabs.create({ url: COMMAND_BAR_PAGE, active: true });
+}
+
+async function injectCommandBar(tabId) {
+  const delays = [0, 100, 220];
+  let lastErr;
+  for (const ms of delays) {
+    if (ms) await new Promise((r) => setTimeout(r, ms));
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        files: ['src/command-bar/command-bar.js'],
+      });
+      return;
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error('inject failed');
+}
+
 chrome.commands.onCommand.addListener(async (command) => {
   if (command !== 'open-command-bar') return;
 
   const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!activeTab) return;
+  if (!activeTab?.id) return;
 
-  // Fallback: chrome:// pages can't run content scripts
   const url = activeTab.url || '';
-  if (url.startsWith('chrome://') || url.startsWith('chrome-extension://') || url.startsWith('about:')) {
-    chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
+
+  if (needsCommandBarFallbackPage(url)) {
+    await openCommandBarFallbackTab();
     return;
   }
 
   try {
-    await chrome.scripting.executeScript({
-      target: { tabId: activeTab.id },
-      files: ['src/command-bar/command-bar.js'],
-    });
+    await injectCommandBar(activeTab.id);
   } catch {
-    // Content script injection failed — open archive as fallback
-    chrome.tabs.create({ url: chrome.runtime.getURL('src/archive/archive.html') });
+    await openCommandBarFallbackTab();
   }
 });
 

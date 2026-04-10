@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Tuckd — Command bar</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #09090f;
+    }
+    @media (prefers-color-scheme: light) {
+      html,
+      body {
+        background: #eef0fa;
+      }
+    }
+    #tuckd-host {
+      display: block;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="tuckd-host"></div>
+  <script src="command-bar.js"></script>
+</body>
+</html>

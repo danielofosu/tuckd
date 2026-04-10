@@ -4,6 +4,12 @@ All notable changes to Tuckd will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-04-10
+
+### Fixed
+- Command bar: open a dedicated extension page on `chrome://`, `about:`, other extensions’ pages, and other URLs where injection is blocked (instead of failing or opening the archive).
+- Command bar: stop keyboard and composition events from bubbling into the underlying page while typing in the palette.
+
 ## [1.1.0] - 2026-04-10
 
 ### Added

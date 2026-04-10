@@ -1,9 +1,14 @@
 // Tuckd — Command Bar (content script, injected into active tab)
 // Uses Shadow DOM for CSS isolation from the host page.
+// Standalone: command-bar-page.html (restricted URLs where injection is impossible)
 
 (() => {
-  // Toggle if already injected
-  if (window.__tuckdCommandBar) {
+  const STANDALONE_PAGE =
+    typeof location !== 'undefined' &&
+    /command-bar-page\.html(\?|$)/.test(location.pathname);
+
+  // Toggle if already injected (not used on standalone page — full reload each time)
+  if (!STANDALONE_PAGE && window.__tuckdCommandBar) {
     window.__tuckdCommandBar.toggle();
     return;
   }
@@ -18,8 +23,14 @@
 
   // ─── Create Shadow DOM host ─────────────────────────────────────────────────
 
-  const host = document.createElement('div');
-  host.id = 'tuckd-command-bar';
+  const host = STANDALONE_PAGE
+    ? document.getElementById('tuckd-host')
+    : (() => {
+        const el = document.createElement('div');
+        el.id = 'tuckd-command-bar';
+        return el;
+      })();
+  if (!host) return;
   const shadow = host.attachShadow({ mode: 'closed' });
 
   // Load styles from extension — track ready state to avoid FOUC
@@ -320,6 +331,16 @@
     debounceTimer = setTimeout(doSearch, 100);
   });
 
+  // Prevent keystrokes from bubbling to the host page (shadow events compose out)
+  function trapInputBubble(e) {
+    e.stopPropagation();
+  }
+  for (const type of ['keydown', 'keyup', 'keypress', 'beforeinput', 'compositionstart', 'compositionupdate', 'compositionend']) {
+    input.addEventListener(type, trapInputBubble);
+  }
+  overlay.addEventListener('mousedown', (e) => e.stopPropagation(), true);
+  overlay.addEventListener('touchstart', (e) => e.stopPropagation(), true);
+
   // ─── Actions ────────────────────────────────────────────────────────────────
 
   function executeAction(item) {
@@ -354,6 +375,15 @@
   }
 
   // ─── Keyboard handler ──────────────────────────────────────────────────────
+
+  function blockKeysToPage(e) {
+    if (!host.isConnected) return;
+    const path = typeof e.composedPath === 'function' ? e.composedPath() : [];
+    if (path.includes(host)) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    input.focus({ preventScroll: true });
+  }
 
   function onKeyDown(e) {
     if (e.key === 'Escape') {
@@ -396,16 +426,20 @@
   // ─── Show / Hide ───────────────────────────────────────────────────────────
 
   function show() {
-    document.body.appendChild(host);
+    if (!STANDALONE_PAGE) {
+      document.body.appendChild(host);
+    }
     savedOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKeyDown, true);
+    window.addEventListener('keydown', blockKeysToPage, true);
 
     // Wait for stylesheet before revealing — prevents flash of unstyled content
     const reveal = () => {
       requestAnimationFrame(() => {
         overlay.classList.add('tr-visible');
-        input.focus();
+        input.focus({ preventScroll: true });
+        requestAnimationFrame(() => input.focus({ preventScroll: true }));
       });
       doSearch();
     };
@@ -434,17 +468,26 @@
   function hide() {
     overlay.classList.remove('tr-visible');
     document.removeEventListener('keydown', onKeyDown, true);
+    window.removeEventListener('keydown', blockKeysToPage, true);
     document.body.style.overflow = savedOverflow;
 
-    // Wait for fade-out animation
-    setTimeout(() => {
-      if (host.parentNode) host.parentNode.removeChild(host);
-      // Reset state
+    const teardown = () => {
+      if (!STANDALONE_PAGE && host.parentNode) host.parentNode.removeChild(host);
       input.value = '';
       resultsContainer.innerHTML = '';
       flatItems = [];
       selectedIndex = -1;
-    }, 150);
+      if (STANDALONE_PAGE) {
+        try {
+          window.close();
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+
+    // Wait for fade-out animation
+    setTimeout(teardown, 150);
   }
 
   function toggle() {
@@ -464,6 +507,6 @@
 
   window.__tuckdCommandBar = { toggle, show, hide };
 
-  // Show immediately on first injection
+  // Show immediately on first injection (or on standalone page load)
   show();
 })();
