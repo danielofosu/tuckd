@@ -22,20 +22,28 @@ jobs:
         id: version
         run: echo "version=$(node -p "require('./manifest.json').version")" >> "$GITHUB_OUTPUT"
 
-      - name: Check if release already exists
+      - name: Check tag and GitHub Release
         id: check
         run: |
-          TAG="v${{ steps.version.outputs.version }}"
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="v${VERSION}"
           if gh release view "$TAG" &>/dev/null; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "release_exists=true" >> "$GITHUB_OUTPUT"
           else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "release_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+          # Tag may already exist (e.g. created locally and pushed) while no Release yet
+          git fetch origin "refs/tags/${TAG}:refs/tags/${TAG}" 2>/dev/null || true
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag_exists=false" >> "$GITHUB_OUTPUT"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create and push tag
-        if: steps.check.outputs.exists == 'false'
+        if: steps.check.outputs.release_exists == 'false' && steps.check.outputs.tag_exists == 'false'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -43,6 +51,7 @@ jobs:
           git push origin "v${{ steps.version.outputs.version }}"
 
       - name: Package extension
+        if: steps.check.outputs.release_exists == 'false'
         run: |
           mkdir -p dist
           zip -r "dist/tuckd-v${{ steps.version.outputs.version }}.zip" \
@@ -53,7 +62,7 @@ jobs:
             -x '*.DS_Store'
 
       - name: Create GitHub Release
-        if: steps.check.outputs.exists == 'false'
+        if: steps.check.outputs.release_exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}
