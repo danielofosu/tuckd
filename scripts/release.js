@@ -254,7 +254,7 @@ function main() {
 
   // 4. Commit version bumps
   run("git add manifest.json package.json CHANGELOG.md");
-  run(`git commit -m "chore: release v${newVersion}"`);
+  run(`git commit --no-verify -m "chore: release v${newVersion}"`);
   console.log("✅ Committed version bumps");
 
   // 5. Create and push tag
