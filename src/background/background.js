@@ -12,6 +12,8 @@ const DEFAULTS = {
 
 const ARCHIVE_MAX = 2000;
 const FRECENCY_MAX = 500;
+/** Rough heuristic: typical renderer + JS for an average tab (MB). Shown as an estimate in UI. */
+const EST_MB_PER_ARCHIVED_TAB = 45;
 const CLEANUP_ALARM = 'cleanup';
 const CLEAR_OLD_ALARM = 'clearOldArchive';
 const BADGE_CLEAR_ALARM = 'badgeClear';
@@ -191,6 +193,7 @@ async function executeQuickAction(commandId, arg) {
         for (const id of toClose) {
           try { await chrome.tabs.remove(id); } catch { /* already closed */ }
         }
+        await incrementUsageStats(toArchive.length);
       }
       return { archived: toArchive.length };
     }
@@ -508,12 +511,53 @@ async function getSettings() {
   return { ...DEFAULTS, ...settings };
 }
 
+function currentMonthKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+async function getUsageRecord() {
+  const { usage = {} } = await chrome.storage.local.get('usage');
+  const key = currentMonthKey();
+  if (usage.monthKey !== key) {
+    return { monthKey: key, tabsThisMonth: 0, estRamMbThisMonth: 0 };
+  }
+  return {
+    monthKey: usage.monthKey,
+    tabsThisMonth: usage.tabsThisMonth || 0,
+    estRamMbThisMonth: usage.estRamMbThisMonth || 0,
+  };
+}
+
+async function incrementUsageStats(tabCount) {
+  if (tabCount <= 0) return;
+  const key = currentMonthKey();
+  const { usage = {} } = await chrome.storage.local.get('usage');
+  let tabs = usage.tabsThisMonth || 0;
+  let ramMb = usage.estRamMbThisMonth || 0;
+  if (usage.monthKey !== key) {
+    tabs = 0;
+    ramMb = 0;
+  }
+  tabs += tabCount;
+  ramMb += tabCount * EST_MB_PER_ARCHIVED_TAB;
+  await chrome.storage.local.set({
+    usage: { monthKey: key, tabsThisMonth: tabs, estRamMbThisMonth: ramMb },
+  });
+}
+
 async function getStats() {
   const { archive = [], lastCleanup = null } = await chrome.storage.local.get([
     'archive',
     'lastCleanup',
   ]);
-  return { archiveCount: archive.length, lastCleanup };
+  const usage = await getUsageRecord();
+  return {
+    archiveCount: archive.length,
+    lastCleanup,
+    tabsArchivedThisMonth: usage.tabsThisMonth,
+    estRamMbThisMonth: usage.estRamMbThisMonth,
+  };
 }
 
 // ─── Core cleanup ─────────────────────────────────────────────────────────────
@@ -570,6 +614,8 @@ async function runCleanup() {
     for (const id of idsToClose) {
       try { await chrome.tabs.remove(id); } catch { /* tab already gone */ }
     }
+
+    await incrementUsageStats(toArchive.length);
 
     // Update badge (auto-clears via alarm)
     chrome.action.setBadgeText({ text: String(toArchive.length) });

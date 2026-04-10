@@ -17,6 +17,23 @@ const DEFAULTS = {
 
 let saveTimer = null;
 
+function formatEstRamLine(mb) {
+  if (mb == null || mb <= 0) return '~0 MB memory freed (est.)';
+  if (mb >= 1024) return `~${(mb / 1024).toFixed(1)} GB memory freed (est.)`;
+  return `~${Math.round(mb)} MB memory freed (est.)`;
+}
+
+async function loadImpactStats() {
+  const tabsEl = document.getElementById('impactTabs');
+  const ramEl = document.getElementById('impactRam');
+  if (!tabsEl || !ramEl) return;
+
+  const stats = await sendMsg({ action: 'getStats' });
+  const n = stats?.tabsArchivedThisMonth ?? 0;
+  tabsEl.textContent = String(n);
+  ramEl.textContent = formatEstRamLine(stats?.estRamMbThisMonth);
+}
+
 // sendMessage wrapper that retries once after waking the service worker
 async function sendMsg(msg) {
   try {
@@ -153,6 +170,7 @@ function wireControls() {
     // Refresh archive count
     const { archive = [] } = await chrome.storage.local.get('archive');
     updateArchiveCount(archive.length);
+    await loadImpactStats();
 
     setTimeout(() => {
       btn.disabled = false;
@@ -164,5 +182,6 @@ function wireControls() {
 
 // ─── Init ──────────────────────────────────────────────────────────────────────
 loadSettings();
+loadImpactStats();
 checkShortcutStatus();
 wireControls();

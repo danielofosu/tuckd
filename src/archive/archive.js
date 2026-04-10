@@ -191,8 +191,7 @@ function matchesQuery(item, query) {
   return (
     item.title?.toLowerCase().includes(query) ||
     item.url?.toLowerCase().includes(query) ||
-    item.description?.toLowerCase().includes(query) ||
-    item.textSnippet?.toLowerCase().includes(query)
+    item.description?.toLowerCase().includes(query)
   );
 }
 

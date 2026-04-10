@@ -2,20 +2,20 @@
 
 :host {
   /* Dark mode (default) */
-  --tr-bg: #0c0c11;
-  --tr-surface: #16161e;
-  --tr-surface-hover: #1d1d28;
-  --tr-border: rgba(255, 255, 255, 0.07);
-  --tr-text: #e2e2ec;
-  --tr-text-secondary: #aaaab8;
-  --tr-muted: #55556a;
+  --tr-bg: #09090f;
+  --tr-surface: rgba(20, 20, 30, 0.9);
+  --tr-surface-hover: rgba(33, 33, 48, 0.88);
+  --tr-border: rgba(255, 255, 255, 0.1);
+  --tr-text: #ececf4;
+  --tr-text-secondary: #b7b7c8;
+  --tr-muted: #7d83a8;
   --tr-accent: #8b5cf6;
   --tr-accent-hover: #7c3aed;
-  --tr-accent-dim: rgba(139, 92, 246, 0.12);
-  --tr-input-bg: #1a1a26;
-  --tr-input-border: rgba(255, 255, 255, 0.08);
-  --tr-backdrop: rgba(0, 0, 0, 0.5);
-  --tr-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --tr-accent-dim: rgba(139, 92, 246, 0.16);
+  --tr-input-bg: rgba(31, 31, 44, 0.86);
+  --tr-input-border: rgba(255, 255, 255, 0.12);
+  --tr-backdrop: rgba(6, 8, 18, 0.58);
+  --tr-shadow: 0 32px 80px rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(255, 255, 255, 0.08);
 
   all: initial;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
@@ -24,20 +24,20 @@
 
 @media (prefers-color-scheme: light) {
   :host {
-    --tr-bg: #f0f0f7;
-    --tr-surface: #ffffff;
-    --tr-surface-hover: #f5f5fa;
-    --tr-border: rgba(0, 0, 0, 0.07);
-    --tr-text: #1a1a2e;
-    --tr-text-secondary: #50507a;
-    --tr-muted: #9090b0;
+    --tr-bg: #eef0fa;
+    --tr-surface: rgba(255, 255, 255, 0.92);
+    --tr-surface-hover: rgba(247, 248, 255, 0.96);
+    --tr-border: rgba(12, 18, 40, 0.1);
+    --tr-text: #191b2d;
+    --tr-text-secondary: #4f5576;
+    --tr-muted: #7a82a6;
     --tr-accent: #7c3aed;
     --tr-accent-hover: #6d28d9;
-    --tr-accent-dim: rgba(124, 58, 237, 0.08);
-    --tr-input-bg: #e8e8f2;
-    --tr-input-border: rgba(0, 0, 0, 0.08);
-    --tr-backdrop: rgba(0, 0, 0, 0.25);
-    --tr-shadow: 0 24px 64px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.06);
+    --tr-accent-dim: rgba(124, 58, 237, 0.12);
+    --tr-input-bg: rgba(240, 243, 252, 0.95);
+    --tr-input-border: rgba(22, 32, 60, 0.12);
+    --tr-backdrop: rgba(16, 22, 42, 0.24);
+    --tr-shadow: 0 24px 56px rgba(29, 35, 66, 0.2), 0 0 0 1px rgba(26, 35, 64, 0.08);
   }
 }
 
@@ -56,10 +56,10 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 20vh;
+  padding-top: min(18vh, 180px);
   background: var(--tr-backdrop);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   opacity: 0;
   transition: opacity 150ms ease;
 }
@@ -73,7 +73,9 @@
 .tr-modal {
   width: 640px;
   max-width: calc(100vw - 32px);
-  background: var(--tr-surface);
+  position: relative;
+  background: linear-gradient(180deg, var(--tr-surface), var(--tr-surface-hover));
+  border: 1px solid var(--tr-border);
   border-radius: 16px;
   box-shadow: var(--tr-shadow);
   overflow: hidden;
@@ -81,6 +83,15 @@
   transition: transform 150ms ease;
   display: flex;
   flex-direction: column;
+}
+
+.tr-modal::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--tr-accent), transparent);
+  opacity: 0.85;
 }
 
 .tr-overlay.tr-visible .tr-modal {
@@ -93,7 +104,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 16px;
+  padding: 15px 16px 14px;
   border-bottom: 1px solid var(--tr-border);
 }
 
@@ -110,6 +121,7 @@
   outline: none;
   background: transparent;
   font-size: 15px;
+  font-weight: 500;
   font-family: inherit;
   color: var(--tr-text);
   caret-color: var(--tr-accent);
@@ -134,7 +146,7 @@
 /* ─── Results ──────────────────────────────────────────────────────── */
 
 .tr-results {
-  max-height: 420px;
+  max-height: 440px;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -155,7 +167,7 @@
 /* Group */
 
 .tr-group {
-  padding: 4px 0;
+  padding: 6px 0;
 }
 
 .tr-group-label {
@@ -164,7 +176,7 @@
   color: var(--tr-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 8px 16px 4px;
+  padding: 8px 16px 6px;
 }
 
 /* Result item */
@@ -173,9 +185,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 16px;
+  margin: 0 8px;
+  padding: 9px 10px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 60ms ease;
+  transition: background 90ms ease, transform 90ms ease;
 }
 
 .tr-item:hover {
@@ -184,6 +198,7 @@
 
 .tr-item.tr-selected {
   background: var(--tr-accent-dim);
+  transform: translateY(-1px);
 }
 
 .tr-item-favicon {
@@ -299,7 +314,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   border-top: 1px solid var(--tr-border);
   font-size: 11px;
   color: var(--tr-muted);
