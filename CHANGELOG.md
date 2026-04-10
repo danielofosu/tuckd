@@ -4,6 +4,11 @@ All notable changes to Tuckd will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.2] - 2026-04-10
+
+### Fixed
+- Command bar: set the host page to `inert` (except our overlay) while open so focused inputs and editors no longer receive keystrokes; tighten input event trapping with capture listeners.
+
 ## [1.1.1] - 2026-04-10
 
 ### Fixed

@@ -20,6 +20,8 @@
   let searchId = 0;          // track stale responses
   let debounceTimer = null;
   let savedOverflow = '';
+  /** Restore { el, hadInert } after closing — `inert` keeps the page from receiving focus/keys */
+  const inertRestore = [];
 
   // ─── Create Shadow DOM host ─────────────────────────────────────────────────
 
@@ -331,15 +333,44 @@
     debounceTimer = setTimeout(doSearch, 100);
   });
 
-  // Prevent keystrokes from bubbling to the host page (shadow events compose out)
-  function trapInputBubble(e) {
+  // Block events from escaping shadow / reaching the document (capture + bubble on the input)
+  function trapFromInput(e) {
     e.stopPropagation();
   }
-  for (const type of ['keydown', 'keyup', 'keypress', 'beforeinput', 'compositionstart', 'compositionupdate', 'compositionend']) {
-    input.addEventListener(type, trapInputBubble);
+  const trapTypes = [
+    'keydown',
+    'keyup',
+    'keypress',
+    'beforeinput',
+    'input',
+    'compositionstart',
+    'compositionupdate',
+    'compositionend',
+  ];
+  for (const type of trapTypes) {
+    input.addEventListener(type, trapFromInput, true);
+    input.addEventListener(type, trapFromInput, false);
   }
   overlay.addEventListener('mousedown', (e) => e.stopPropagation(), true);
   overlay.addEventListener('touchstart', (e) => e.stopPropagation(), true);
+
+  /** Makes every body child except our host inert so editors/search on the page cannot stay focused. */
+  function markBackgroundInert() {
+    if (STANDALONE_PAGE || !document.body) return;
+    for (const el of document.body.children) {
+      if (el === host) continue;
+      const hadInert = el.hasAttribute('inert');
+      if (!hadInert) el.setAttribute('inert', '');
+      inertRestore.push({ el, hadInert });
+    }
+  }
+
+  function restoreBackgroundInert() {
+    for (const { el, hadInert } of inertRestore) {
+      if (!hadInert) el.removeAttribute('inert');
+    }
+    inertRestore.length = 0;
+  }
 
   // ─── Actions ────────────────────────────────────────────────────────────────
 
@@ -428,6 +459,7 @@
   function show() {
     if (!STANDALONE_PAGE) {
       document.body.appendChild(host);
+      markBackgroundInert();
     }
     savedOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -472,6 +504,7 @@
     document.body.style.overflow = savedOverflow;
 
     const teardown = () => {
+      if (!STANDALONE_PAGE) restoreBackgroundInert();
       if (!STANDALONE_PAGE && host.parentNode) host.parentNode.removeChild(host);
       input.value = '';
       resultsContainer.innerHTML = '';
